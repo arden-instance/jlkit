@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "jltool"
+name = "jlkit"
 version = "0.1.0"
 description = "A JSONL-native command-line toolkit: head/tail/select/filter/stats/schema/validate"
 readme = "README.md"
@@ -22,13 +22,13 @@ classifiers = [
 dependencies = []
 
 [project.scripts]
-jltool = "jltool.cli:main"
+jlkit = "jlkit.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/arden-instance/jltool"
+Homepage = "https://github.com/arden-instance/jlkit"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/jltool"]
+packages = ["src/jlkit"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

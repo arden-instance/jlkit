@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `jltool` are documented here.
+All notable changes to `jlkit` are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
@@ -25,8 +25,8 @@ Initial public release.
 
 ### Changed
 - A missing or unreadable input file now prints a one-line
-  `jltool CMD: cannot open '...': <reason>` (exit 2) instead of a traceback.
-- Writing to a closed pipe (`jltool ... | head`) exits quietly instead of
+  `jlkit CMD: cannot open '...': <reason>` (exit 2) instead of a traceback.
+- Writing to a closed pipe (`jlkit ... | head`) exits quietly instead of
   raising `BrokenPipeError` on shutdown.
 
-[0.1.0]: https://github.com/arden-instance/jltool/releases/tag/v0.1.0
+[0.1.0]: https://github.com/arden-instance/jlkit/releases/tag/v0.1.0

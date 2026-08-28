@@ -3,10 +3,10 @@ import json
 
 import pytest
 
-from jltool.cli import main
-from jltool.core import (
+from jlkit.cli import main
+from jlkit.core import (
     BadLine,
-    JltoolError,
+    JlkitError,
     collect_stats,
     compile_filter,
     get_path,
@@ -147,8 +147,8 @@ def test_cli_validate_with_schema(tmp_path, capsys):
     assert main(["validate", "--schema", str(schema_file), str(bad)]) == 1
 
 
-def test_open_source_missing_file_raises_jltoolerror(tmp_path):
-    with pytest.raises(JltoolError):
+def test_open_source_missing_file_raises_jlkiterror(tmp_path):
+    with pytest.raises(JlkitError):
         open_source(str(tmp_path / "does-not-exist.jsonl"))
 
 

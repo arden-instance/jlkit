@@ -1,4 +1,4 @@
-"""Command-line entry point for jltool.
+"""Command-line entry point for jlkit.
 
 Subcommands: head, tail, select, filter, stats, schema, validate.
 Everything streams; nothing loads the whole file except where a full pass is
@@ -17,7 +17,7 @@ from typing import Sequence
 from . import __version__
 from .core import (
     BadLine,
-    JltoolError,
+    JlkitError,
     collect_stats,
     compile_filter,
     dump,
@@ -75,7 +75,7 @@ def _cmd_filter(args: argparse.Namespace) -> int:
     try:
         pred = compile_filter(args.expr)
     except ValueError as e:
-        print(f"jltool filter: {e}", file=sys.stderr)
+        print(f"jlkit filter: {e}", file=sys.stderr)
         return 2
     with open_source(args.file) as stream:
         for _, obj in _limited(
@@ -129,8 +129,8 @@ def _cmd_validate(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="jltool", description="JSONL-native toolkit")
-    p.add_argument("--version", action="version", version=f"jltool {__version__}")
+    p = argparse.ArgumentParser(prog="jlkit", description="JSONL-native toolkit")
+    p.add_argument("--version", action="version", version=f"jlkit {__version__}")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     def add_common(sp):
@@ -182,8 +182,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         return args.func(args)
-    except JltoolError as e:
-        print(f"jltool {args.cmd}: {e}", file=sys.stderr)
+    except JlkitError as e:
+        print(f"jlkit {args.cmd}: {e}", file=sys.stderr)
         return 2
     except KeyboardInterrupt:
         return 130

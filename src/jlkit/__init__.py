@@ -1,4 +1,4 @@
-"""jltool — a JSONL-native command-line toolkit.
+"""jlkit — a JSONL-native command-line toolkit.
 
 Dataset-level operations on newline-delimited JSON: head, tail, select,
 filter, stats, schema, validate. Everything streams; malformed lines are
