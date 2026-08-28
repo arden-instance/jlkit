@@ -8,12 +8,13 @@ newline-delimited JSON, the format every LLM / eval / log / data pipeline emits.
 Everything streams: it never loads the whole file and it tolerates malformed
 lines (reporting them by number where that matters).
 
-> Status: **beta** (v0.1.0). All seven subcommands work; PyPI release imminent.
+> Status: **beta** (v0.1.1) — [on PyPI](https://pypi.org/project/jlkit/). All
+> seven subcommands work.
 
 ## Install
 
 ```
-uvx jlkit --help      # or: pipx install jlkit
+pip install jlkit        # or: pipx install jlkit
 ```
 
 ## Usage
