@@ -22,6 +22,8 @@ Initial public release.
   also report non-conforming records. Exits non-zero on any failure (CI-friendly).
 - Global `--limit N` — stop after N input records.
 - Transparent `.gz` input; reads a file arg or stdin.
+- Requires Python 3.12+ (argparse in 3.12 handles options interspersed with
+  positional arguments, e.g. `jlkit select name --limit 1 data.jsonl`).
 
 ### Changed
 - A missing or unreadable input file now prints a one-line
