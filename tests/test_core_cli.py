@@ -54,6 +54,37 @@ def test_cli_head(tmp_path, capsys):
     assert len(out) == 2 and '"a":1' in out[0]
 
 
+def test_cli_head_file_only(tmp_path, capsys):
+    f = tmp_path / "d.jsonl"
+    f.write_text(SAMPLE)
+    # N omitted: the sole positional is the file, not a bogus count
+    assert main(["head", str(f)]) == 0
+    out = capsys.readouterr().out.strip().splitlines()
+    assert len(out) == 3
+
+
+def test_cli_head_lines_flag(tmp_path, capsys):
+    f = tmp_path / "d.jsonl"
+    f.write_text(SAMPLE)
+    assert main(["head", "-n", "1", str(f)]) == 0
+    out = capsys.readouterr().out.strip().splitlines()
+    assert len(out) == 1 and '"a":1' in out[0]
+
+
+def test_cli_tail_file_only(tmp_path, capsys):
+    f = tmp_path / "d.jsonl"
+    f.write_text(SAMPLE)
+    assert main(["tail", str(f)]) == 0
+    assert len(capsys.readouterr().out.strip().splitlines()) == 3
+
+
+def test_cli_head_bad_count(tmp_path, capsys):
+    f = tmp_path / "d.jsonl"
+    f.write_text(SAMPLE)
+    assert main(["head", "notanum", str(f)]) == 2
+    assert "record count" in capsys.readouterr().err
+
+
 def test_cli_tail(tmp_path, capsys):
     f = tmp_path / "d.jsonl"
     f.write_text(SAMPLE)

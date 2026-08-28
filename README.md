@@ -19,7 +19,7 @@ uvx jlkit --help      # or: pipx install jlkit
 ## Usage
 
 ```
-jlkit head 20 data.jsonl
+jlkit head -n 20 data.jsonl
 cat data.jsonl.gz | jlkit tail 5
 jlkit select id,user.name,ts events.jsonl
 

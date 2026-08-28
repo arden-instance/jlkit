@@ -39,18 +39,39 @@ def _limited(records, limit):
         yield rec
 
 
+def _resolve_count_file(args: argparse.Namespace) -> tuple[int, str | None]:
+    """Untangle the head/tail positional forms into (n, file)."""
+    n, path = args.lines, None
+    a, b = args.a, args.b
+    if b is not None:            # `<cmd> N FILE`
+        if n is None:
+            try:
+                n = int(a)
+            except ValueError:
+                raise JlkitError(f"expected a record count, got {a!r}")
+        path = b
+    elif a is not None:          # `<cmd> N`  or  `<cmd> FILE`
+        if n is None and a.lstrip("-").isdigit():
+            n = int(a)
+        else:
+            path = a
+    return (10 if n is None else n), path
+
+
 def _cmd_head(args: argparse.Namespace) -> int:
-    with open_source(args.file) as stream:
+    n, path = _resolve_count_file(args)
+    with open_source(path) as stream:
         for i, (_, obj) in enumerate(iter_records(stream)):
-            if i >= args.n:
+            if i >= n:
                 break
             print(dump(obj))
     return 0
 
 
 def _cmd_tail(args: argparse.Namespace) -> int:
-    buf: collections.deque = collections.deque(maxlen=args.n)
-    with open_source(args.file) as stream:
+    n, path = _resolve_count_file(args)
+    buf: collections.deque = collections.deque(maxlen=n)
+    with open_source(path) as stream:
         for _, obj in iter_records(stream):
             buf.append(obj)
     for obj in buf:
@@ -137,15 +158,16 @@ def build_parser() -> argparse.ArgumentParser:
         sp.add_argument("--limit", type=int, default=None,
                         help="stop after N input records")
 
-    h = sub.add_parser("head", help="first N records")
-    h.add_argument("n", type=int, nargs="?", default=10)
-    h.add_argument("file", nargs="?")
-    h.set_defaults(func=_cmd_head)
-
-    t = sub.add_parser("tail", help="last N records")
-    t.add_argument("n", type=int, nargs="?", default=10)
-    t.add_argument("file", nargs="?")
-    t.set_defaults(func=_cmd_tail)
+    for name, fn in (("head", _cmd_head), ("tail", _cmd_tail)):
+        sp = sub.add_parser(name, help=f"{'first' if name == 'head' else 'last'} N records")
+        sp.add_argument("-n", "--lines", type=int, default=None,
+                        help="number of records (default 10)")
+        # Positional forms, all supported: `jlkit head file`, `jlkit head 5 file`,
+        # `jlkit head 5` (stdin). `a` is N or the file; `b` is the file if `a` is N.
+        sp.add_argument("a", nargs="?", metavar="[N] [FILE]",
+                        help="record count and/or input file (default: 10, stdin)")
+        sp.add_argument("b", nargs="?", help=argparse.SUPPRESS)
+        sp.set_defaults(func=fn)
 
     s = sub.add_parser("select", help="project fields by dotted path")
     s.add_argument("fields", help="comma-separated dotted paths")
