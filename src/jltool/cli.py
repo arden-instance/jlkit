@@ -10,12 +10,14 @@ from __future__ import annotations
 import argparse
 import collections
 import json
+import os
 import sys
 from typing import Sequence
 
 from . import __version__
 from .core import (
     BadLine,
+    JltoolError,
     collect_stats,
     compile_filter,
     dump,
@@ -178,7 +180,19 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    return args.func(args)
+    try:
+        return args.func(args)
+    except JltoolError as e:
+        print(f"jltool {args.cmd}: {e}", file=sys.stderr)
+        return 2
+    except KeyboardInterrupt:
+        return 130
+    except BrokenPipeError:
+        # Downstream (e.g. `| head`) closed the pipe. Silence the shutdown-time
+        # flush error by pointing stdout at the void, then exit quietly.
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull, sys.stdout.fileno())
+        return 0
 
 
 if __name__ == "__main__":

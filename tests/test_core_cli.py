@@ -6,11 +6,13 @@ import pytest
 from jltool.cli import main
 from jltool.core import (
     BadLine,
+    JltoolError,
     collect_stats,
     compile_filter,
     get_path,
     infer_schema,
     iter_records,
+    open_source,
     schema_errors,
 )
 
@@ -143,6 +145,18 @@ def test_cli_validate_with_schema(tmp_path, capsys):
     bad = tmp_path / "bad.jsonl"
     bad.write_text('{"name": "x", "age": "nope", "country": "US"}\n')
     assert main(["validate", "--schema", str(schema_file), str(bad)]) == 1
+
+
+def test_open_source_missing_file_raises_jltoolerror(tmp_path):
+    with pytest.raises(JltoolError):
+        open_source(str(tmp_path / "does-not-exist.jsonl"))
+
+
+def test_cli_missing_file_is_clean_error(tmp_path, capsys):
+    rc = main(["select", "a", str(tmp_path / "nope.jsonl")])
+    assert rc == 2
+    err = capsys.readouterr().err
+    assert "nope.jsonl" in err and "Traceback" not in err
 
 
 def test_cli_limit(tmp_path, capsys):

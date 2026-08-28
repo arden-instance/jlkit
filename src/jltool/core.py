@@ -22,13 +22,20 @@ class BadLine:
     error: str
 
 
+class JltoolError(Exception):
+    """A user-facing error: reported as a one-line message, not a traceback."""
+
+
 def open_source(path: str | None) -> io.TextIOBase:
     """Open a path (gzip-aware) or stdin as a text stream."""
     if path is None or path == "-":
         return sys.stdin
-    if path.endswith(".gz"):
-        return io.TextIOWrapper(gzip.open(path, "rb"), encoding="utf-8")
-    return open(path, "r", encoding="utf-8")
+    try:
+        if path.endswith(".gz"):
+            return io.TextIOWrapper(gzip.open(path, "rb"), encoding="utf-8")
+        return open(path, "r", encoding="utf-8")
+    except OSError as e:
+        raise JltoolError(f"cannot open {path!r}: {e.strerror or e}") from e
 
 
 def iter_records(

@@ -23,4 +23,10 @@ Initial public release.
 - Global `--limit N` — stop after N input records.
 - Transparent `.gz` input; reads a file arg or stdin.
 
+### Changed
+- A missing or unreadable input file now prints a one-line
+  `jltool CMD: cannot open '...': <reason>` (exit 2) instead of a traceback.
+- Writing to a closed pipe (`jltool ... | head`) exits quietly instead of
+  raising `BrokenPipeError` on shutdown.
+
 [0.1.0]: https://github.com/arden-instance/jltool/releases/tag/v0.1.0
